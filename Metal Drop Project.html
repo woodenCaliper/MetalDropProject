@@ -16,7 +16,10 @@ h6{font-size:14px;margin:14px 0 6px;color:#6b7078}
 p{margin:8px 0}.quote{border-left:3px solid #d7dce2;padding-left:14px;color:#42464d}
 /* 編集画面（pre-wrap）と同じく、貼り付け由来の改行文字を行として残す */
 p,li,h2,h3,h4,h5,h6{white-space:pre-wrap}
-details.toggle{margin:8px 0}details.toggle>summary{cursor:pointer}details.toggle>summary>*{display:inline;margin:0}
+/* トグル三角と箇条書きドットは、エディタ(v109/v111)と同じ約2倍サイズに揃える。
+   ブラウザ既定マーカーは大きさを揃えられないため消して、同じグリフを自前で描く。 */
+details.toggle{margin:8px 0}details.toggle>summary{cursor:pointer;list-style:none;position:relative;padding-left:34px}details.toggle>summary::-webkit-details-marker{display:none}details.toggle>summary::before{content:"▸";position:absolute;left:0;top:50%;transform:translateY(-50%);font-size:28px;line-height:1;color:#6b7078}details.toggle[open]>summary::before{content:"▾"}details.toggle>summary>*{display:inline;margin:0}
+ul{margin:4px 0;padding-left:0;list-style:none}ul>li{position:relative;padding-left:24px}ul>li::before{content:"•";position:absolute;left:2px;top:.78em;transform:translateY(-50%);font-size:28px;line-height:1;color:#6b7078}
 .toc{display:grid;gap:3px;margin:12px 0 18px;padding:12px 14px;border:1px solid #e1e5e9;border-left:3px solid #a7b5c3;border-radius:6px;background:#f6f8fa}.toc .toc-title{margin-bottom:4px;padding-bottom:8px;border-bottom:1px solid #e4e8ec;color:#68737e;font-size:12px;font-weight:700}.toc a{padding:3px 6px;border-radius:4px;color:#39414a;text-decoration:none}.toc a:hover{background:#e9eef3}.toc-level-1{font-weight:650}.toc-level-2{margin-left:18px}.toc-level-3{margin-left:32px}.toc-level-4{margin-left:46px}.toc-level-5{margin-left:60px;color:#6b7078}
 .doc-columns{display:grid;gap:20px;align-items:start;margin:10px 0}.doc-column{min-width:0}
 .indent{margin-left:28px}
@@ -25,8 +28,10 @@ code.inline-code{padding:1px 4px;border-radius:4px;background:#eef0f2;color:#b93
 pre{background:#f1f3f4;padding:12px;border-radius:8px;overflow:auto;font-family:"M PLUS 1 Code","Noto Sans JP",ui-monospace,SFMono-Regular,Consolas,monospace}
 hr{border:0;border-top:1px solid #d7dce2;margin:18px 0}
 table.doc-table{width:100%;border-collapse:collapse;margin:12px 0 18px;table-layout:fixed}
+table.doc-table-sized{width:auto}
 table.doc-table td{border:1px solid #d7dce2;padding:7px 9px;vertical-align:top;overflow-wrap:anywhere}
 table.doc-table-header tr:first-child td{background:#eef1f5;font-weight:700}
+table.doc-table td.doc-th-col{background:#eef1f5;font-weight:700}
 table.doc-table td.doc-formula{text-decoration:underline dotted #9aa8b6;text-underline-offset:3px}
 .doc-chart{margin:12px 0 18px}
 .doc-chart svg{display:block;width:100%;max-width:660px;height:auto}
@@ -39,6 +44,11 @@ table.doc-table td.doc-formula{text-decoration:underline dotted #9aa8b6;text-und
 .doc-chart .chart-legend{font-size:11px;fill:#202124}
 .doc-chart .chart-message{font-size:12px;fill:#6b7078}
 pre.doc-chart-source{margin:6px 0 0;padding:7px 9px;border:1px solid #e3e7ec;border-radius:7px;background:#f6f7f9;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;overflow-x:auto}
+.doc-math{margin:12px 0 18px;text-align:center;font-size:1.12em}
+.doc-math math{display:inline-block}
+pre.doc-math-source{margin:6px 0 0;padding:7px 9px;border:1px solid #f0b5ad;border-radius:7px;background:#fdf3f2;color:#b9382b;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;overflow-x:auto;text-align:left}
+span.inline-math{padding:0 2px}
+span.inline-math.math-error{border-radius:4px;background:#fdf3f2;color:#b9382b;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.92em}
 .todo.done{text-decoration:line-through;color:#6b7078}
 .attachment{border:1px solid #d7dce2;border-radius:8px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}
 .image-attachment{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:12px 0 18px}.image-attachment[data-align="center"]{align-items:center}.image-attachment[data-align="right"]{align-items:flex-end}.image-attachment img{display:block;width:var(--image-width,100%);height:auto;border:1px solid #d7dce2;border-radius:8px;background:#f5f6f8}.image-attachment figcaption{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
@@ -78,6 +88,10 @@ Ga-In-Sn合金を使用する。
 <p>問題点として、ガリウムは非常に酸化しやすく、酸化するとその酸化膜は濡れ性が高く、容器に張り付くような形になってしまい、見た目が美しくない。
 液体の方にある程度酸化膜を除去する、もしくは酸化を防ぐ仕組みが必要である。</p>
 <p></p>
+<div class="indent"><details class="toggle" open><summary><h3 id="block-e2b7e3d6-bdef-4a0f-ba99-e9b6797d3b68">様々な液体金属候補</h3></summary><p><br></p>
+</details>
+<p></p>
+</div><p></p>
 <h2 id="block-5686cf4c-f070-440c-ae04-6acea1ba9fe2">液体の選定</h2>
 <p>現状の最有力候補は、
 エチレングリコール+硫酸
@@ -105,7 +119,7 @@ Ga-In-Sn合金を使用する。
   "format": "SingleHtmlTechnicalDocument",
   "formatVersion": "0.7.0",
   "title": "Metal Drop Project",
-  "createdAt": "2026-09-20T06:33:21.231Z",
+  "createdAt": "2026-09-21T13:25:20.093Z",
   "integrity": {
     "algorithm": "SHA-256",
     "scope": "attachments"
@@ -266,6 +280,34 @@ Ga-In-Sn合金を使用する。
       "text": "問題点として、ガリウムは非常に酸化しやすく、酸化するとその酸化膜は濡れ性が高く、容器に張り付くような形になってしまい、見た目が美しくない。\n液体の方にある程度酸化膜を除去する、もしくは酸化を防ぐ仕組みが必要である。",
       "indent": 0,
       "html": "問題点として、ガリウムは非常に酸化しやすく、酸化するとその酸化膜は濡れ性が高く、容器に張り付くような形になってしまい、見た目が美しくない。\n液体の方にある程度酸化膜を除去する、もしくは酸化を防ぐ仕組みが必要である。"
+    },
+    {
+      "id": "c7763444-c69a-4e27-b72c-b163e52559b5",
+      "type": "paragraph",
+      "text": "",
+      "indent": 0
+    },
+    {
+      "id": "e2b7e3d6-bdef-4a0f-ba99-e9b6797d3b68",
+      "type": "toggleHeading2",
+      "text": "様々な液体金属候補",
+      "indent": 1,
+      "html": "様々な液体金属候補",
+      "open": true
+    },
+    {
+      "id": "3858e15e-c8c7-4df9-8a20-b310fb8546a7",
+      "type": "paragraph",
+      "text": "\n",
+      "indent": 2,
+      "html": "<br>"
+    },
+    {
+      "id": "3cac93fe-c86a-41a6-abb6-4ceb838a626c",
+      "type": "paragraph",
+      "text": "",
+      "indent": 1,
+      "html": ""
     },
     {
       "id": "ba8699c0-142a-4cc6-b9b4-2102f69a1155",
